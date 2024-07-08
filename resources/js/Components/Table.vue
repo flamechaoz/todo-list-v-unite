@@ -12,10 +12,12 @@
   const props = defineProps({
       data: {
         type: Array,
+        required: true,
         default: () => []
       },
       fields: {
         type: Array,
+        required: true,
         default: () => []
       },
   });
