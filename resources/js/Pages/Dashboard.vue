@@ -28,6 +28,7 @@ const statuses = [
 const todos = ref([]);
 
 const activeTodo = ref({task: '', status: 'pending'});
+const editTodo = ref({task: '', status: 'pending'});
 
 const modals = ref({
     add: false,
@@ -52,6 +53,7 @@ const isOpen = (modal) => {
 
 const openEditModal = (todo) => {
     activeTodo.value = todo;
+    editTodo.value = { ...todo }
     openModal('edit');
 };
 
@@ -75,10 +77,22 @@ const fetchTodos = async () => {
 
 const saveTodo = async () => {
     try {
-        const response = await axios.post('/api/todos', {task: task.value, status: 'pending'});
+        const response = await axios.post('/api/todos', activeTodo.value);
         console.log('Todo saved:', response.data);
-        // Reset the newTodo object
-        task.value = '';
+        // Reset the activeTodo object
+        activeTodo.value = {task: '', status: 'pending'};
+        fetchTodos();
+    } catch (error) {
+        console.error('Error saving todo:', error);
+    }
+}
+
+const patchTodo = async () => {
+    try {
+        const response = await axios.put(`/api/todos/${editTodo.value.id}`, editTodo.value);
+        console.log('Todo edited:', response.data);
+        // Reset the activeTodo object
+        activeTodo.value = {task: '', status: 'pending'};
         fetchTodos();
     } catch (error) {
         console.error('Error saving todo:', error);
@@ -143,7 +157,7 @@ onMounted(() => {
         <fwb-modal size="md" v-if="isOpen('addConfirm')" @close="closeModal('addConfirm')">
             <template #body>
                 <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                    Add the task <b>"{{ task }}"</b> ?
+                    Add the task <b>"{{ activeTodo.task }}"</b> ?
                 </p>
             </template>
             <template #footer>
@@ -162,12 +176,12 @@ onMounted(() => {
             <template #body>
                 <fwb-input
                     class="mb-4"
-                    v-model="activeTodo.task"
+                    v-model="editTodo.task"
                     placeholder="task"
                     label="Task"
                 />
                 <fwb-select
-                    v-model="activeTodo.status"
+                    v-model="editTodo.status"
                     :options="statuses"
                     label="Select a status"
                 />
@@ -177,11 +191,36 @@ onMounted(() => {
                     <fwb-button @click="closeEditModal()" color="alternative">
                         Close
                     </fwb-button>
-                    <fwb-button @click="openModal('editConfirm'); closeEditModal()" color="green">
+                    <fwb-button @click="openModal('editConfirm'); closeModal('edit')" color="green">
                         Save
                     </fwb-button>
                 </div>
             </template>
         </fwb-modal>
+
+        <fwb-modal size="md" v-if="isOpen('editConfirm')" @close="closeModal('editConfirm')">
+            <template #body>
+                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    Save the following changes?
+                </p>
+                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    Task <b>{{ activeTodo.task }}</b> >> <b>{{ editTodo.task }}</b>
+                </p>
+                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    Status <b>{{ activeTodo.status }}</b> >> <b>{{ editTodo.status }}</b>
+                </p>
+            </template>
+            <template #footer>
+                <div class="flex justify-between">
+                    <fwb-button @click="openModal('edit'); closeModal('editConfirm')" color="alternative">
+                        Cancel
+                    </fwb-button>
+                    <fwb-button @click="patchTodo(); closeModal('editConfirm')" color="green">
+                        Confirm
+                    </fwb-button>
+                </div>
+            </template>
+        </fwb-modal>
+
     </GuestLayout>
 </template>
