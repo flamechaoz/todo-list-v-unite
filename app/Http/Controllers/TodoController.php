@@ -13,7 +13,6 @@ class TodoController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
         $todos = Todo::all();
 
         return Inertia::render('Todos/Index', [
