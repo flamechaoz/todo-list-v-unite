@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('todos', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-        });
+        //
+        Schema::drop('todos');
     }
 
     /**
@@ -21,9 +20,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('todos', function (Blueprint $table) {
-            // Recreate the foreign key constraint in case of rollback
-            $table->foreign('user_id')->references('id')->on('users');
-        });
+        //
     }
 };
