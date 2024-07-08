@@ -31,8 +31,10 @@ class TodoController extends Controller
             'status' => 'required|string|max:255'
         ]);
 
+        // Create todo item
         $todo = Todo::create($validated);
 
+        // Return the created todo item
         return response()->json($todo, 201);
     }
 
@@ -60,6 +62,25 @@ class TodoController extends Controller
             'status' => 'success',
             'data' => $todo,
         ], 200);
+    }
 
+    public function destroy($id)
+    {
+        $todo = Todo::find($id);
+
+        if (!$todo) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Todo item not found',
+            ], 404);
+        }
+
+        $todo->delete();
+
+         // Return a success response
+         return response()->json([
+            'status' => 'success',
+            'message' => 'Todo item deleted successfully',
+        ], 200);
     }
 }

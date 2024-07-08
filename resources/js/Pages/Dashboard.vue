@@ -36,7 +36,6 @@ const modals = ref({
     delete: false,
     addConfirm: false,
     editConfirm: false,
-    deleteConfirm: false,
 });
 
 const openModal = (modal) => {
@@ -60,6 +59,11 @@ const openEditModal = (todo) => {
 const closeEditModal = () => {
     activeTodo.value = {task: '', status: 'pending'};
     closeModal('edit');
+}
+
+const openDeleteModal = (todo) => {
+    activeTodo.value = todo;
+    openModal('delete');
 }
 
 const fetchTodos = async () => {
@@ -99,6 +103,23 @@ const patchTodo = async () => {
     }
 }
 
+const deleteTodo = async () => {
+    try {
+        await axios.delete(`/api/todos/${activeTodo.value.id}`);
+        console.log('Todo deleted.');
+        // Reset the activeTodo object
+        activeTodo.value = {task: '', status: 'pending'};
+        fetchTodos();
+    } catch (error) {
+        console.error('Error saving todo:', error);
+    }
+}
+
+const actions = [
+    { label: 'Edit', action: openEditModal, color: 'alternative' },
+    { label: 'Delete', action: openDeleteModal, color: 'red' }
+];
+
 onMounted(() => {
     fetchTodos();
 });
@@ -115,14 +136,14 @@ onMounted(() => {
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="py-4">
-                        <fwb-button class="ms-4" @click="openModal('add')" color="alternative">
+                        <fwb-button class="ms-4" @click="openModal('add')" color="green">
                             Add
                         </fwb-button>
                     </div>
                     <Table
                         :fields="fields"
                         :data="todos"
-                        :actions="[{ label: 'Edit', action: openEditModal }]"
+                        :actions="actions"
                         >
                     </Table>
                 </div>
@@ -222,5 +243,31 @@ onMounted(() => {
             </template>
         </fwb-modal>
 
+        <fwb-modal size="md" v-if="isOpen('delete')" @close="closeModal('delete')">
+            <template #body>
+                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    Delete the task?
+                </p>
+                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    ID: <b>{{ activeTodo.id }}</b>
+                </p>
+                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    Task: <b>{{ activeTodo.task }}</b>
+                </p>
+                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    Status: <b>{{ activeTodo.status }}</b>
+                </p>
+            </template>
+            <template #footer>
+                <div class="flex justify-between">
+                    <fwb-button @click="closeModal('delete')" color="alternative">
+                        Cancel
+                    </fwb-button>
+                    <fwb-button @click="deleteTodo(); closeModal('delete')" color="red">
+                        Delete
+                    </fwb-button>
+                </div>
+            </template>
+        </fwb-modal>
     </GuestLayout>
 </template>
