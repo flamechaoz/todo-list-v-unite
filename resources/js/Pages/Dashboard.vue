@@ -4,7 +4,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import Table from '@/Components/Table.vue';
 import { Head } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
-import { FwbButton, FwbModal } from 'flowbite-vue';
+import { FwbButton, FwbInput, FwbModal } from 'flowbite-vue';
 
 const fields = [
     { "key": "id", "label": "ID" },
@@ -16,13 +16,15 @@ const fields = [
 
 const todos = ref([]);
 
+const task = ref('');
+
 const isShowAddModal = ref(false)
 
 function closeAddModal () {
-  isShowAddModal.value = false
+    isShowAddModal.value = false
 }
 function showAddModal () {
-  isShowAddModal.value = true
+    isShowAddModal.value = true
 }
 
 const fetchTodos = async () => {
@@ -67,26 +69,17 @@ onMounted(() => {
             </div>
         </div>
         <fwb-modal v-if="isShowAddModal" @close="closeAddModal">
-            <template #header>
-                <div class="flex items-center text-lg">
-                    Terms of Service
-                </div>
-            </template>
             <template #body>
-                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                    With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.
-                </p>
-                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                    The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union. It requires organizations to notify users as soon as possible of high-risk data breaches that could personally affect them.
-                </p>
+                <fwb-input
+                    v-model="task"
+                    placeholder="enter new task"
+                    label="New task"
+                />
             </template>
             <template #footer>
-                <div class="flex justify-between">
-                    <fwb-button @click="closeAddModal" color="alternative">
-                        Decline
-                    </fwb-button>
+                <div class="flex justify-end">
                     <fwb-button @click="closeAddModal" color="green">
-                        I accept
+                        Save
                     </fwb-button>
                 </div>
             </template>
