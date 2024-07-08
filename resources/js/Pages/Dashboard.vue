@@ -12,12 +12,24 @@ const fields = [
     { "key": "updated_at", "label": "Date Updated" }
 ];
 
-const data = ref([]);
+const todos = ref([]);
+
+const fetchTodos = async () => {
+    try {
+        const response = await fetch('/api/todos');
+        if (!response.ok) {
+            throw new Error('Network response error.');
+        }
+        const data = await response.json();
+        todos.value = data;
+    } catch (error) {
+        console.error('Error fetching todos:', error);
+    }
+};
 
 onMounted(() => {
-  console.log(data);
+    fetchTodos();
 });
-
 </script>
 
 <template>
@@ -33,7 +45,7 @@ onMounted(() => {
 
                     <Table
                         :fields="fields"
-                        :data="data"
+                        :data="todos"
                         >
                     </Table>
                 </div>

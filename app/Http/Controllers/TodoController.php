@@ -11,13 +11,12 @@ use Inertia\Inertia;
 
 class TodoController extends Controller
 {
+    // GET /api/todos
     public function index()
     {
         $todos = Todo::all();
 
-        return Inertia::render('Todos/Index', [
-            'data' => TodoResource::collection($todos)->resolve(),
-        ]);
+        return response()->json(TodoResource::collection($todos)->resolve());
     }
 
     public function show(Todo $todo)

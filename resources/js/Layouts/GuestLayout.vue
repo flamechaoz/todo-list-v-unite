@@ -74,8 +74,8 @@ const showingNavigationDropdown = ref(false);
                     class="sm:hidden"
                 >
                     <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('todos.index')" :active="route().current('todos.index')">
-                            Todo's
+                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                            Dashboard
                         </ResponsiveNavLink>
                     </div>
                 </div>
