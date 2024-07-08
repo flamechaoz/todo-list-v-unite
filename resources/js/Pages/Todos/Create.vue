@@ -1,7 +1,10 @@
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
 
 const form = useForm({
     task: '',
@@ -29,6 +32,35 @@ const form = useForm({
                             </PrimaryButton>
                         </Link>
                     </div>
+                    <form @submit.prevent="submit">
+                        <div>
+                            <InputLabel for="task" value="task" />
+                            <TextInput
+                                id="task"
+                                type="text"
+                                class="mt-1 block w-full"
+                                v-model="form.task"
+                                required
+                            />
+                            <InputError class="mt-2" :message="form.errors.task" />
+                        </div>
+                        <div class="mt-4">
+                            <InputLabel for="email" value="Email" />
+                            <TextInput
+                                id="email"
+                                type="email"
+                                class="mt-1 block w-full"
+                                v-model="form.email"
+                                required
+                                autocomplete="username"
+                            />
+                            <InputError class="mt-2" :message="form.errors.email" />
+                        </div>
+
+                        <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                            Register
+                        </PrimaryButton>
+                    </form>
                 </div>
             </div>
         </div>
