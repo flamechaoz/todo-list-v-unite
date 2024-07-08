@@ -33,7 +33,7 @@ class TodoController extends Controller
     {
         $validated = $request->validate([
             'task' => 'required|string|max:255',
-            'user_id' => 'required|exists:users,id',
+            'status' => 'required|string|max:255'
         ]);
 
         $todo = Todo::create($validated);
