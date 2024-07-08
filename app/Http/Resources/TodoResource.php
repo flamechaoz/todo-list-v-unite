@@ -19,10 +19,8 @@ class TodoResource extends JsonResource
             'user_id' => $this->user_id,
             'task' => $this->task,
             'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
         ];
-
-        return parent::toArray($request);
     }
 }

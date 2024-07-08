@@ -21,7 +21,6 @@
         default: () => []
       },
   });
-  console.log(props);
 </script>
 
 <template>

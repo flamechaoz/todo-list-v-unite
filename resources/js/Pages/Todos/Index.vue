@@ -2,32 +2,27 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import Table from '@/Components/Table.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
-const todos = ref([
-    {
-        "id": 1,
-        "task": "John",
-        "status": "john@example.com",
-        "created_at": "john@example.com",
-        "updated_at": "john@example.com"
-    },
-    {
-        "id": 2,
-        "task": "John",
-        "status": "john@example.com",
-        "created_at": "john@example.com",
-        "updated_at": "john@example.com"
-    }
-]);
-
-const fields = ref([
+const fields = [
     { "key": "id", "label": "ID" },
     { "key": "task", "label": "Task" },
     { "key": "status", "label": "Status" },
     { "key": "created_at", "label": "Date Created" },
     { "key": "updated_at", "label": "Date Updated" }
-]);
+];
+
+const props = defineProps({
+    data: {
+        type: Array,
+        required: true,
+        default: () => []
+    },
+});
+
+onMounted(() => {
+  console.log(props.data);
+});
 
 </script>
 
@@ -45,7 +40,7 @@ const fields = ref([
 
                     <Table
                         :fields="fields"
-                        :data="todos"
+                        :data="data"
                         >
                     </Table>
 

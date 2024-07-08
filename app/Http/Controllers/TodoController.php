@@ -14,18 +14,21 @@ class TodoController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $todos = Todo::where('user_id', $user->id)->get();
-
-        $todos = TodoResource::collection(Todo::all());
+        $todos = Todo::all();
 
         return Inertia::render('Todos/Index', [
-            'data' => TodoResource::collection($todos),
+            'data' => TodoResource::collection($todos)->resolve(),
         ]);
     }
 
     public function show(Todo $todo)
     {
         return response()->json($todo);
+    }
+
+    public function create()
+    {
+
     }
 
     public function store(Request $request)
