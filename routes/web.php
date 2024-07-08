@@ -10,6 +10,10 @@ Route::get('/', function () {
     return Inertia::render('Dashboard');
 })->name('dashboard');
 
+Route::get('/new', function () {
+    return Inertia::render('Todos/Create');
+})->name('new');
+
 Route::prefix('api')->group(function () {
     Route::get('/todos', [TodoController::class, 'index']);
     Route::post('/todos', [TodoController::class, 'store']);

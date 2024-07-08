@@ -1,8 +1,10 @@
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 import Table from '@/Components/Table.vue';
 import { Head } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
+import { Link } from '@inertiajs/vue3';
 
 const fields = [
     { "key": "id", "label": "ID" },
@@ -42,7 +44,13 @@ onMounted(() => {
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-
+                    <div class="py-4">
+                        <Link :href="route('new')">
+                            <PrimaryButton class="ms-4">
+                                Add
+                            </PrimaryButton>
+                        </Link>
+                    </div>
                     <Table
                         :fields="fields"
                         :data="todos"
