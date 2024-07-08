@@ -3,7 +3,12 @@ import GuestLayout from '@/Layouts/GuestLayout.vue';
 import Table from '@/Components/Table.vue';
 import { Head } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
-import { FwbButton, FwbInput, FwbModal } from 'flowbite-vue';
+import { 
+    FwbButton,
+    FwbInput,
+    FwbModal,
+    FwbSelect
+} from 'flowbite-vue';
 import axios from 'axios';
 
 const fields = [
@@ -14,9 +19,15 @@ const fields = [
     { "key": "updated_at", "label": "Date Updated" }
 ];
 
+const statuses = [
+    {value: 'pending', name: 'pending'},
+    {value: 'ongoing', name: 'ongoing'},
+    {value: 'done', name: 'done'},
+];
+
 const todos = ref([]);
 
-const task = ref('');
+const activeTodo = ref({task: '', status: 'pending'});
 
 const modals = ref({
     add: false,
@@ -28,15 +39,25 @@ const modals = ref({
 });
 
 const openModal = (modal) => {
-  modals.value[modal] = true;
+    modals.value[modal] = true;
 }
 
 const closeModal = (modal) => {
-  modals.value[modal] = false;
+    modals.value[modal] = false;
 }
 
 const isOpen = (modal) => {
-  return modals.value[modal];
+    return modals.value[modal];
+}
+
+const openEditModal = (todo) => {
+    activeTodo.value = todo;
+    openModal('edit');
+};
+
+const closeEditModal = () => {
+    activeTodo.value = {task: '', status: 'pending'};
+    closeModal('edit');
 }
 
 const fetchTodos = async () => {
@@ -53,15 +74,15 @@ const fetchTodos = async () => {
 }
 
 const saveTodo = async () => {
-  try {
-    const response = await axios.post('/api/todos', {task: task.value, status: 'pending'});
-    console.log('Todo saved:', response.data);
-    // Reset the newTodo object
-    task.value = '';
-    fetchTodos();
-  } catch (error) {
-    console.error('Error saving todo:', error);
-  }
+    try {
+        const response = await axios.post('/api/todos', {task: task.value, status: 'pending'});
+        console.log('Todo saved:', response.data);
+        // Reset the newTodo object
+        task.value = '';
+        fetchTodos();
+    } catch (error) {
+        console.error('Error saving todo:', error);
+    }
 }
 
 onMounted(() => {
@@ -87,6 +108,7 @@ onMounted(() => {
                     <Table
                         :fields="fields"
                         :data="todos"
+                        :actions="[{ label: 'Edit', action: openEditModal }]"
                         >
                     </Table>
                 </div>
@@ -94,11 +116,16 @@ onMounted(() => {
         </div>
 
         <fwb-modal size="md" v-if="isOpen('add')" @close="closeModal('add')">
+            <template #header>
+                <div class="flex items-center text-lg">
+                    New Task
+                </div>
+            </template>
             <template #body>
                 <fwb-input
-                    v-model="task"
+                    v-model="activeTodo.task"
                     placeholder="enter new task"
-                    label="New task"
+                    label="Task"
                 />
             </template>
             <template #footer>
@@ -131,5 +158,30 @@ onMounted(() => {
             </template>
         </fwb-modal>
 
+        <fwb-modal size="md" v-if="isOpen('edit')" @close="closeEditModal()">
+            <template #body>
+                <fwb-input
+                    class="mb-4"
+                    v-model="activeTodo.task"
+                    placeholder="task"
+                    label="Task"
+                />
+                <fwb-select
+                    v-model="activeTodo.status"
+                    :options="statuses"
+                    label="Select a status"
+                />
+            </template>
+            <template #footer>
+                <div class="flex justify-between">
+                    <fwb-button @click="closeEditModal()" color="alternative">
+                        Close
+                    </fwb-button>
+                    <fwb-button @click="openModal('editConfirm'); closeEditModal()" color="green">
+                        Save
+                    </fwb-button>
+                </div>
+            </template>
+        </fwb-modal>
     </GuestLayout>
 </template>

@@ -1,6 +1,7 @@
 <script setup>
   import {
     FwbA,
+    FwbButton,
     FwbTable,
     FwbTableBody,
     FwbTableCell,
@@ -20,6 +21,10 @@
         required: true,
         default: () => []
       },
+      actions: {
+        type: Array,
+        default: () => []
+      }
   });
 </script>
 
@@ -37,10 +42,12 @@
     <fwb-table-body>
       <fwb-table-row v-for="(item, index) in data" :key="index">
         <fwb-table-cell v-for="(field, idx) in fields" :key="idx">{{ item[field.key] }}</fwb-table-cell>
-        <fwb-table-cell>
-          <fwb-a href="#">
-            Edit
-          </fwb-a>
+        <fwb-table-cell v-if="actions">
+          <span v-for="(action) in actions">
+            <fwb-button class="ms-4" @click="action.action(item)" :color="action.color">
+                {{ action.label }}
+            </fwb-button>
+          </span>
         </fwb-table-cell>
       </fwb-table-row>
     </fwb-table-body>
